@@ -1,0 +1,34 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net6.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <UseWPF>true</UseWPF>
+    <UseWindowsForms>true</UseWindowsForms>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="DictionaryStyle\pokeball.png" />
+    <None Remove="DictionaryStyle\question.jpg" />
+    <None Remove="DictionaryStyle\search%281%29.png" />
+    <None Remove="DictionaryStyle\search.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    <PackageReference Include="System.Net.Http.Formatting.Extension" Version="5.2.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Les1\ApplicationSoftware_Les1\CSVManager\CSVManager.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="DictionaryStyle\pokeball.png" />
+    <Resource Include="DictionaryStyle\question.jpg" />
+    <Resource Include="DictionaryStyle\search(1).png" />
+    <Resource Include="DictionaryStyle\search.png" />
+  </ItemGroup>
+
+</Project>
