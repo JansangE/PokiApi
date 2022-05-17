@@ -30,7 +30,7 @@ namespace PokiApi.ViewModels
 
         string path;
         bool IsGameStart = false;
-        BitmapImage _Image = new BitmapImage();
+        BitmapImage _Image;
 
 
         //ViewModels
@@ -72,8 +72,23 @@ namespace PokiApi.ViewModels
         public List<Root> ListAllPokemon{ get => _ListAllPokemon; set { SetValue(ref _ListAllPokemon, value); } }
         public BitmapImage SelectedPokemonGIF 
         { 
-            get => _Image; 
-            set { SetValue(ref _Image, value); } }
+            get
+            {
+                if (_Image is null)
+                {
+                    _Image = new BitmapImage();
+                    _Image.BeginInit();
+                    _Image.UriSource = new Uri("/Views/bulbasaur-3.gif", UriKind.Relative);
+                    _Image.EndInit();
+                }
+
+                return _Image;
+            }
+            set
+            { 
+                SetValue(ref _Image, value); 
+            } 
+        }
 
         //setting
         public AutoCompleteStringCollection Acs { get => acs; set { SetValue(ref acs, value); } }
@@ -194,10 +209,13 @@ namespace PokiApi.ViewModels
                                 string uriStart = "https://play.pokemonshowdown.com/sprites/xyani/";
                                 string uriNamePokemon = poki.Name;
                                 string uriEnd = ".gif";
+
                                 _Image = new BitmapImage();
                                 _Image.BeginInit();
                                 _Image.UriSource = new Uri(uriStart + uriNamePokemon + uriEnd, UriKind.Absolute);
                                 _Image.EndInit();
+
+                                OnPropertyChanged("SelectedPokemonGIF");
                             }
 
 
