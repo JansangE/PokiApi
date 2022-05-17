@@ -10,6 +10,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PokiApi", "PokiApi\PokiApi.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CSVManager", "..\..\Les1\ApplicationSoftware_Les1\CSVManager\CSVManager.csproj", "{52F82DA5-2485-48FF-BB11-3EA7D00655F4}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PokiApi.UI", "PokiApi.UI\PokiApi.UI.csproj", "{B469F300-A0BF-4CD5-9960-D3DAD45112FB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -24,6 +26,10 @@ Global
 		{52F82DA5-2485-48FF-BB11-3EA7D00655F4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{52F82DA5-2485-48FF-BB11-3EA7D00655F4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{52F82DA5-2485-48FF-BB11-3EA7D00655F4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B469F300-A0BF-4CD5-9960-D3DAD45112FB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B469F300-A0BF-4CD5-9960-D3DAD45112FB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B469F300-A0BF-4CD5-9960-D3DAD45112FB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B469F300-A0BF-4CD5-9960-D3DAD45112FB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

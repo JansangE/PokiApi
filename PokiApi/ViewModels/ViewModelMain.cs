@@ -12,6 +12,7 @@ using MessageBox = System.Windows.Forms.MessageBox;
 using System.IO;
 
 using CSVManager;
+using System.Windows.Media.Imaging;
 
 namespace PokiApi.ViewModels
 {
@@ -22,10 +23,28 @@ namespace PokiApi.ViewModels
         public Pokemon _PokemonList;
         public Root _selectedPoki;
 
+
         AutoCompleteStringCollection acs;
 
-        private string _GetTypePokemon;
+
         string path;
+        bool IsGameStart = false;
+        //BitmapImage _Image;
+
+        //BitmapImage Image
+        //{
+        //    get
+        //    {
+        //        _Image = new BitmapImage(new Uri("https://github.com/PokeAPI/sprites/blob/master/sprites/pokemon/versions/generation-v/black-white/animated/25.gif"));
+        //        return _Image;
+        //    }
+        //    set
+        //    {
+        //        _Image = new BitmapImage(new Uri("https://github.com/PokeAPI/sprites/blob/master/sprites/pokemon/versions/generation-v/black-white/animated/25.gif"));
+        //        SetValue(ref _Image, value);
+        //    }
+
+        //}
 
         //ViewModels
         ViewModelPokedex viewPokedex { get; set; }
@@ -48,36 +67,14 @@ namespace PokiApi.ViewModels
         }
 
         //Properties
-        public Pokemon PokemonList
-        {
-            get { return _PokemonList; }
-            set { SetValue(ref _PokemonList, value); } 
-        }
-
+        public Pokemon PokemonList { get { return _PokemonList; } set { SetValue(ref _PokemonList, value); } }
+        
         public string Path { get => path; set => path = value; }
+        public Root SelectedPoki{ get { return _selectedPoki; } set { SetValue(ref _selectedPoki, value); } }
+        public List<Root> ListAllPokemon{ get => _ListAllPokemon; set { SetValue(ref _ListAllPokemon, value); } }
 
-        public Root SelectedPoki
-        {
-            get { return _selectedPoki; }
-            set { SetValue(ref _selectedPoki, value); }
-        }
-        public string GetTypePokemon
-        {
-            get => _GetTypePokemon;
-            set
-            {
-                SetValue(ref _GetTypePokemon, value);
-            }
-        }
-
-        public List<Root> ListPokemonDex
-        {
-            get => _ListAllPokemon;
-            set
-            {
-                SetValue(ref _ListAllPokemon, value);
-            }
-        }
+        //setting
+        public AutoCompleteStringCollection Acs { get => acs; set { SetValue(ref acs, value); } }
 
         public ICommand PokeballCommand
         {
@@ -111,15 +108,6 @@ namespace PokiApi.ViewModels
             }
         }
 
-        public AutoCompleteStringCollection Acs 
-        { 
-            get => acs;
-            set
-            {
-                SetValue(ref acs, value);
-            }
-
-        }
 
         private async void Init()
         {
@@ -147,20 +135,13 @@ namespace PokiApi.ViewModels
 
             }
 
-            while (_ListAllPokemon.Count < 151)
+            foreach (var name in _PokemonList.Results)
             {
-                foreach (var name in _PokemonList.Results)
+                acs.Add(name.Name);
+                using (ApiCall ac = new ApiCall(name.Url))
                 {
-                    acs.Add(name.Name);
-                    using (ApiCall ac = new ApiCall(name.Url))
-                    {
-                        _ListAllPokemon.Add(await ac.CallPokemon());
-
-                    }
-
+                    _ListAllPokemon.Add(await ac.CallPokemon());
                 }
-
-                
             }
 
 
@@ -170,48 +151,63 @@ namespace PokiApi.ViewModels
         private async Task SearchPokeMethodeAsync(object pokemonName)
         {
 
-            if (_ListAllPokemon.Count < 151)
+
+            //string name = (string)pokemonName;
+            TextBox test = (TextBox)pokemonName;
+            if (acs.Count <151)
             {
-                MessageBox.Show("Wait" + _ListAllPokemon.Count.ToString());
+                MessageBox.Show("Loading " + Math.Round((acs.Count / 151.0) * 100,0).ToString() + "%");
             }
             else
             {
-                //string name = (string)pokemonName;
-                TextBox test = (TextBox)pokemonName;
-
-
-                //test.AutoCompleteMode = AutoCompleteMode.SuggestAppend;
-                //test.AutoCompleteSource = AutoCompleteSource.CustomSource;
-                //test.AutoCompleteCustomSource = acs;
-
-                foreach (var poki in _ListAllPokemon)
+                if (!IsGameStart)
                 {
-                    if (test.Text.Equals(poki.name))
-                    {
-                        _selectedPoki = poki;
-                    }
+                    test.AutoCompleteMode = AutoCompleteMode.SuggestAppend;
+                    test.AutoCompleteSource = AutoCompleteSource.CustomSource;
+                    test.AutoCompleteCustomSource = acs;
+
+                    IsGameStart = true;
+
                 }
 
-                if (_selectedPoki is null)
+                if (CheckIfPokemonNameCorrect(test.Text))
                 {
-                    MessageBox.Show("Can't find your Pokemon");
+                    foreach (var poki in _PokemonList.Results)
+                    {
+                        if (test.Text.Equals(poki.Name))
+                        {
+                            using (ApiCall ac = new ApiCall(poki.Url))
+                            {
+                                _selectedPoki = await ac.CallPokemon();
+
+                            }
+                        }
+                    }
+
+                    OnPropertyChanged("SelectedPoki");
+                    OnPropertyChanged("GetTypePokemon");
+                    //OnPropertyChanged("Image");
                 }
                 else
                 {
-                    //_GetTypePokemon = string.Empty;
-                    ////foreach (var item in _selectedPoki.types)
-                    ////{
-                    ////    _GetTypePokemon += item.type + "\n";
-                    ////}
-
+                    MessageBox.Show("Can't find your Pokemon");
                 }
-
-                OnPropertyChanged("SelectedPoki");
-                OnPropertyChanged("GetTypePokemon");
-
-
-                //MessageBox.Show(_selectedPoki.Url);
             }
+            
+
+        }
+
+        private bool CheckIfPokemonNameCorrect(string input)
+        {
+            foreach (var poki in _PokemonList.Results)
+            {
+                if (input.Equals(poki.Name))
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         private async void PokeballMehode(object o)
@@ -306,6 +302,7 @@ namespace PokiApi.ViewModels
         {
             string[] content = reader.ReadAlternativeUsing(path);
             //List<Root> list = new List<Root>();
+            _ListAllPokemon.Clear();
 
             foreach (var p in _ListAllPokemon)
             {

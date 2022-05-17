@@ -12,7 +12,7 @@ namespace PokiApi.Models
         // Root myDeserializedClass = JsonConvert.DeserializeObject<Root>(myJsonResponse);
         public class Ability
         {
-            public Ability ability { get; set; }
+            public Ability2 ability { get; set; }
             public bool is_hidden { get; set; }
             public int slot { get; set; }
         }
@@ -351,7 +351,7 @@ namespace PokiApi.Models
         public class Type
         {
             public int slot { get; set; }
-            public Type type { get; set; }
+            public Type2 type { get; set; }
         }
 
         public class Type2
