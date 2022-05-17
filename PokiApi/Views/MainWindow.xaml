@@ -5,15 +5,20 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:PokiApi"
         xmlns:wf="clr-namespace:System.Windows.Forms;assembly=System.Windows.Forms"
+        xmlns:gif="http://wpfanimatedgif.codeplex.com"
         mc:Ignorable="d"
-        Title="MainWindow" Height="500" Width="800">
+        Title="MainWindow" Height="470"  Width="800" MinHeight="470" MinWidth="470">
     
     
     <Grid>
         <TabControl>
             <TabItem Header="Search">
                 <Grid Background="#FFFFC9D0">
+                    <!--<Image Height="500" Style="{StaticResource MainPhoto}">
+                        
+                    </Image>-->
                     <StackPanel>
+                        <!--Visibility="Hidden"--> 
                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Left"  >
                             <!--<TextBox x:Name="txtSearch" Margin="20,20,0,0" Height="30" Width="700" 
                                      FontWeight="Light"
@@ -38,10 +43,11 @@
                                 </Image.InputBindings>
                             </Image>
                         </StackPanel>
-                        <StackPanel Orientation="Horizontal">
+                        <StackPanel Orientation="Horizontal" MaxHeight="400" MinHeight="300">
 
-                            <Image Style="{StaticResource MainPhoto}" Width="350"  Margin="50,50,50,50"
-                                   Source="{Binding SelectedPoki.sprites.front_default}"/>
+                            <Image Style="{StaticResource MainPhoto}" MaxWidth="300" MaxHeight="200" MinHeight="200" MinWidth="300"  Margin="50,50,50,50" 
+                                   gif:ImageBehavior.AnimatedSource="{Binding SelectedPokemonGIF}"/>
+                            <!--Source="{Binding SelectedPoki.sprites.front_default}" />-->
                             <StackPanel Margin="0,50,50,50">
                                 <StackPanel Orientation="Horizontal">
                                     <Label Content="Name: "/>
@@ -68,7 +74,7 @@
                                 </StackPanel>
                             </StackPanel>
                         </StackPanel>
-                        <StackPanel>
+                        <StackPanel VerticalAlignment="Bottom" HorizontalAlignment="Stretch" >
                             <Image Style="{StaticResource PokeballRed}" Cursor="Hand" ToolTip="Applies filter">
                                 <Image.InputBindings>
                                     <MouseBinding Gesture="LeftClick" 
@@ -81,15 +87,34 @@
                     
                 </Grid>
             </TabItem>
-            
-            <TabItem Header="Pokédex">
+
+            <TabItem Header="Pokédex" Visibility="{Binding Tab2}">
                 <Grid Background="#FFE5E5E5">
                     <StackPanel Orientation="Vertical">
-                        <DataGrid Margin="50,50,50,50" ItemsSource="{Binding ListAllPokemon}" MaxHeight="300" MinHeight="300">
+                        <!--<ListBox>
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <ListView ItemsSource="{Binding ListAllPokemon}">
+                                        <ListView.View>
+                                            <GridView>
+                                                <GridViewColumn DisplayMemberBinding="{Binding id}"/>
+                                            </GridView>
+                                        </ListView.View>
+                                    </ListView>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>-->
+                        <DataGrid Margin="50,50,50,50" ItemsSource="{Binding ListAllPokemon}" MaxHeight="300" MinHeight="300"
+                                  AutoGenerateColumns="False">
                             <DataGrid.Columns>
-                                <!--<DataGridTextColumn Header="Name" Binding="{Binding id}"/>
-                                <DataGridTextColumn Header="Picture" Binding="{Binding name}"/>-->
-                                <!--<DataGridTextColumn Header="Stats" Binding="{Binding ID}"/>-->
+                                <DataGridTextColumn Header="ID" Binding="{Binding id}"/>
+                                <DataGridTemplateColumn Header="Picture">
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <Image Source="{Binding sprites.front_default}"/>
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
                             </DataGrid.Columns>
                         </DataGrid>
                     </StackPanel>

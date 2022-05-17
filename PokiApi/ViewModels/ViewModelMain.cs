@@ -13,6 +13,7 @@ using System.IO;
 
 using CSVManager;
 using System.Windows.Media.Imaging;
+using WpfAnimatedGif;
 
 namespace PokiApi.ViewModels
 {
@@ -29,25 +30,15 @@ namespace PokiApi.ViewModels
 
         string path;
         bool IsGameStart = false;
-        //BitmapImage _Image;
+        BitmapImage _Image = new BitmapImage();
 
-        //BitmapImage Image
-        //{
-        //    get
-        //    {
-        //        _Image = new BitmapImage(new Uri("https://github.com/PokeAPI/sprites/blob/master/sprites/pokemon/versions/generation-v/black-white/animated/25.gif"));
-        //        return _Image;
-        //    }
-        //    set
-        //    {
-        //        _Image = new BitmapImage(new Uri("https://github.com/PokeAPI/sprites/blob/master/sprites/pokemon/versions/generation-v/black-white/animated/25.gif"));
-        //        SetValue(ref _Image, value);
-        //    }
-
-        //}
 
         //ViewModels
         ViewModelPokedex viewPokedex { get; set; }
+
+        //Visibility
+        Visibility _tab2 = Visibility.Hidden;
+
 
 
 
@@ -70,11 +61,25 @@ namespace PokiApi.ViewModels
         public Pokemon PokemonList { get { return _PokemonList; } set { SetValue(ref _PokemonList, value); } }
         
         public string Path { get => path; set => path = value; }
-        public Root SelectedPoki{ get { return _selectedPoki; } set { SetValue(ref _selectedPoki, value); } }
+        public Root SelectedPoki
+        {
+            get => _selectedPoki;
+            set 
+            { 
+                SetValue(ref _selectedPoki, value);
+            } 
+        }
         public List<Root> ListAllPokemon{ get => _ListAllPokemon; set { SetValue(ref _ListAllPokemon, value); } }
+        public BitmapImage SelectedPokemonGIF 
+        { 
+            get => _Image; 
+            set { SetValue(ref _Image, value); } }
 
         //setting
         public AutoCompleteStringCollection Acs { get => acs; set { SetValue(ref acs, value); } }
+        public Visibility Tab2 { get => _tab2; set { SetValue(ref _tab2, value); } }
+
+
 
         public ICommand PokeballCommand
         {
@@ -107,6 +112,8 @@ namespace PokiApi.ViewModels
                 _SearchPokeCommand = value;
             }
         }
+
+
 
 
         private async void Init()
@@ -167,6 +174,8 @@ namespace PokiApi.ViewModels
                     test.AutoCompleteCustomSource = acs;
 
                     IsGameStart = true;
+                    _tab2 = Visibility.Visible;
+                    OnPropertyChanged("Tab2");
 
                 }
 
@@ -180,7 +189,18 @@ namespace PokiApi.ViewModels
                             {
                                 _selectedPoki = await ac.CallPokemon();
 
+                                // set GIF
+
+                                string uriStart = "https://play.pokemonshowdown.com/sprites/xyani/";
+                                string uriNamePokemon = poki.Name;
+                                string uriEnd = ".gif";
+                                _Image = new BitmapImage();
+                                _Image.BeginInit();
+                                _Image.UriSource = new Uri(uriStart + uriNamePokemon + uriEnd, UriKind.Absolute);
+                                _Image.EndInit();
                             }
+
+
                         }
                     }
 
@@ -218,48 +238,44 @@ namespace PokiApi.ViewModels
             if (GotIt())
             {
                 string msg = SavePokemonToDex(_selectedPoki);
+                if (msg == null)
+                {
 
-                MessageBox.Show(msg);
+                    MessageBox.Show("Bravo!");
 
-                //_ListAllPokemon = new List<Root>();
+                    //_ListAllPokemon = new List<Root>();
 
-                ReadToDataGrid();
-
-                MessageBox.Show(_ListAllPokemon.Count.ToString());
+                    ReadToDataGrid();
+                }
+                else
+                {
+                    MessageBox.Show(msg);
+                }
+                
             }
             else
             {
                 MessageBox.Show("Sorry next time!");
             }
             
-
-
-
-            string ok = "OK";
-
-            MessageBox.Show(ok);
         }
 
         //Save catch Pokemon in Dex
         public string SavePokemonToDex(Root pokie)
         {
-            string msg = null;
-            try
-            {
 
+            string msg = null;
+            if (_selectedPoki is null)
+            {
+                msg = "Please find your pokemon!";
+            }
+            else
+            {
                 using (StreamWriter sw = new StreamWriter(path: path, append: true))
                 {
                     //sw.WriteLine($"ID");
                     sw.WriteLine($"{pokie.name}");
-
-                }
-
-                msg = "Bravo you Got it!";
-            }
-            catch (Exception)
-            {
-
-                msg = "Something Wrong CatchPokemon";
+                }               
             }
 
             return msg;
@@ -268,8 +284,6 @@ namespace PokiApi.ViewModels
         //Random get Pokemon
         public bool GotIt()
         {
-
-
             return true;
         }
 

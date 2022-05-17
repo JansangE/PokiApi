@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Media.Imaging;
 using PokiApi.Models;
 using static PokiApi.Models.Pokemon;
 
@@ -79,5 +80,24 @@ namespace PokiApi.ViewModels
             return pokemon;
             
         }
+
+        public async Task<BitmapImage> CallPokemonGif(string url)
+        { 
+            BitmapImage img = null;
+
+            HttpResponseMessage mes = await _HTTPClient.GetAsync($"{url}");
+
+            if (mes.IsSuccessStatusCode)
+            {
+                img = await mes.Content.ReadAsAsync<BitmapImage>();
+            }
+            else
+            {
+                throw new Exception("Something is wrong!");
+            }
+
+            return img;
+        }
+
     }
 }
